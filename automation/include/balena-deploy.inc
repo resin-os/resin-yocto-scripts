@@ -422,6 +422,7 @@ balena_deploy_build_block() {
 	local _packages="${3:-${PACKAGES}}"
 	local _balenaos_account="${4:-balena_os}"
 	local _api_env="${5:-$(balena_lib_environment)}"
+	local _deploy="${6:-${deploy}}"
 
 	[ -z "${_appName}" ] && echo "App name is required" && return
 	[ -z "${_device_type}" ] && echo "Device type is required" && return
@@ -444,6 +445,7 @@ balena_deploy_build_block() {
 		-e WORKSPACE=/work \
 		-e balenaCloudEmail="${balenaCloudEmail}" \
 		-e balenaCloudPassword="${balenaCloudPassword}" \
+		-e DEPLOY="${_deploy}" \
 		-v "${WORKSPACE:-"${PWD}"}":/work \
 		--privileged \
 		"${NAMESPACE}"/yocto-block-build-env:"${balena_yocto_scripts_revision}" /balena-build-block.sh
