@@ -154,6 +154,41 @@ else
 	popd > /dev/null 2>&1
 fi
 
+# Build hostapp
+"${automation_dir}"/../build/balena-build.sh -d "${MACHINE}" -s "${JENKINS_PERSISTENT_WORKDIR}" -a "$(balena_lib_environment)" -v "${buildFlavor}" -g "${BARYS_ARGUMENTS_VAR}" -b "-c image_docker" -i "balena-image"
+
+# Deploy hostapp
+if [ "$deploy" = "yes" ]; then
+	# balena-image only deploys after completion
+	image_path=$(find "${WORKSPACE}/build/tmp/work/" -name "balena-image-${MACHINE}*.docker" -type l)
+	if [ -L "${image_path}" ]; then
+		balena_deploy_hostapp "${MACHINE}" "${image_path}"
+	else
+		echo "no hostapp to deploy"
+		exit 1
+	fi
+fi
+
+# Build and deploy blocks
+if [ -n "${blocks}" ]; then
+	if [ "${deploy}" = "yes" ]; then
+		DEPLOY="1"
+	fi
+	"${automation_dir}/jenkins_build-blocks.sh" -d "${MACHINE}" -a "$(balena_lib_environment)" -b "${blocks}" -t "$(balena_lib_token)" -v "${buildFlavor}" -s "${JENKINS_PERSISTENT_WORKDIR}" "${DEPLOY:+"-p"}"
+fi
+
+# Deploy hostos
+if [ "$deploy" = "yes" ]; then
+	osapp="${MACHINE}-hostos"
+	blocks_apps="${MACHINE}"
+	for block in ${blocks}; do
+		blocks_apps="${blocks_apps} ${MACHINE}-${block}"
+	done
+	balena_deploy_hostos "${osapp}" "${blocks_apps}" "${MACHINE}"
+	BARYS_ARGUMENTS_VAR="${BARYS_ARGUMENTS_VAR} -a HOSTOS_APPS=${osapp}"
+fi
+
+# Build image
 "${automation_dir}"/../build/balena-build.sh -d "${MACHINE}" -s "${JENKINS_PERSISTENT_WORKDIR}" -a "$(balena_lib_environment)" -v "${buildFlavor}" -g "${BARYS_ARGUMENTS_VAR}"
 
 if [ "$ENABLE_TESTS" = true ]; then
@@ -186,7 +221,6 @@ if [ "$deploy" = "yes" ]; then
 
 	if [ "${_state}" != "DISCONTINUED" ]; then
 		balena_deploy_to_dockerhub "${MACHINE}"
-		balena_deploy_hostapp "${MACHINE}"
 	fi
 
 fi
