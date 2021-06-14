@@ -20,21 +20,25 @@ source "${include_dir}/balena-docker.inc"
 #  $5: Build variant (defaults to buildFlavor environment variable)
 #  $6: BalenaOS account (defaults to balena_os)
 #  $7: App name to deploy to (defaults to specified device type)
+#  $8: Balena environment email credentials
+#  $9: Balena environment password credentials
+#  $10: Use the provided image path (defaults to the deploy directory path)
 #
 balena_deploy_hostapp() {
 	local _device_type="${1:-"${MACHINE}"}"
-	local _api_env="${2:-$(balena_lib_environment)}"
-	local _token="${3:-$(balena_lib_token "${_api_env}")}"
-	local _esr="${4}"
-	local _variant="${5}"
-	local _balenaos_account="${6}"
-	local _app="${7}"
-	local _balenaCloudEmail="${8:-"${balenaCloudEmail}"}"
-	local _balenaCloudPassword="${9:-"${balenaCloudPassword}"}"
+	local _image_path="${2:-"${device_dir}/build/tmp/deploy/images/${_device_type}/balena-image-${_device_type}.docker"}"
+	local _api_env="${3:-$(balena_lib_environment)}"
+	local _token="${4:-$(balena_lib_token "${_api_env}")}"
+	local _esr="${5}"
+	local _variant="${6}"
+	local _balenaos_account="${7}"
+	local _app="${8}"
+	local _balenaCloudEmail="${9:-"${balenaCloudEmail}"}"
+	local _balenaCloudPassword="${10:-"${balenaCloudPassword}"}"
 	local _version
 	local _image_path
 	[ -z "${_device_type}" ] && echo "[balena_deploy_hostapp] A device type is required" && return 1
-	_image_path="$(readlink --canonicalize "${device_dir}/build/tmp/deploy/images/${_device_type}/balena-image-${_device_type}.docker")"
+	_image_path="$(readlink --canonicalize "${_image_path}")"
 	if ! balena_lib_docker_pull_helper_image "Dockerfile_balena-push-env" balena_yocto_scripts_revision; then
 		return 1
 	fi
