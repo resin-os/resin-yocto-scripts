@@ -7,6 +7,26 @@ source /balena-api.inc
 
 trap 'balena_docker_stop fail' SIGINT SIGTERM
 
+release_version="${RELEASE_VERSION}"
+if [ -n "${VARIANT}" ]; then
+	if [ "${VARIANT}" = "dev" ]; then
+		release_version="${release_version}.dev"
+		variant_str="development"
+	else
+		variant_str="production"
+	fi
+fi
+
+if [ "$ESR" = "true" ]; then
+	echo "Deploying ESR release"
+	APPNAME="${APPNAME}-esr"
+fi
+
+if balena_api_get_release "${APPNAME}" "${release_version}" "${API_ENV}"; then
+	echo "[INFO] Release ${release_version} already exists for ${APPNAME}"
+	exit 1
+fi
+
 # Start docker
 balena_docker_start "/scratch/docker" "/var/run" "/var/log/docker.log"
 balena_docker_wait
@@ -18,24 +38,13 @@ echo "[INFO] Logging into $API_ENV as ${BALENAOS_ACCOUNT}"
 export BALENARC_BALENA_URL=${API_ENV}
 balena login --token "${BALENAOS_TOKEN}"
 
-if [ "$ESR" = "true" ]; then
-	echo "Deploying ESR release"
-	APPNAME="${APPNAME}-esr"
-fi
 
 echo "[INFO] Pushing $_local_image to ${BALENAOS_ACCOUNT}/$APPNAME"
 balena_api_create_public_app "${APPNAME}" "${BALENARC_BALENA_URL}" "${MACHINE}" "${balenaCloudEmail}" "${balenaCloudPassword}" "${BOOTABLE}"
 _releaseID=$(balena deploy "${BALENAOS_ACCOUNT}/$APPNAME" "$_local_image" | sed -n 's/.*Release: //p')
 
 # Legacy hostapp tagging
-release_version="${RELEASE_VERSION}"
 if [ -n "${VARIANT}" ]; then
-	if [ "${VARIANT}" = "dev" ]; then
-		release_version="${release_version}.dev"
-		variant_str="development"
-	else
-		variant_str="production"
-	fi
 	echo "[INFO] Tagging release ${_releaseID} with version ${release_version} and variant ${variant_str}"
 	balena tag set version "${release_version}" --release "${_releaseID}"
 	balena tag set variant "${variant_str}" --release "${_releaseID}"
