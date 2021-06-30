@@ -1,4 +1,71 @@
 - commits:
+    - subject: 'AMI automation: Adjust AMI names to be compatible with AWS API'
+      hash: 0555d61ede8bc8f8d17581e1638c961e2654d4e4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+    - subject: 'AMI automation: Correct S3 bucket name and key'
+      hash: 01f5d64cf26688694a6b38ee62de3b73659fc6de
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+    - subject: 'AMI automation: Add a separate container for generaing AMI'
+      hash: b7b3705018163e5319c85caefd7be5f93dff3561
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Michal Toman <michalt@balena.io>
+        signed-off-by: Michal Toman <michalt@balena.io>
+      author: Michal Toman
+      nested: []
+    - subject: 'AMI automation: shellcheck and resolve violations'
+      hash: bf942f16a60b140f46c926b695779c15af64cc93
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+    - subject: 'AMI automation: Use staging env by default'
+      hash: 7aef1ffca8e4916674bf1824cdaa6242bfdac96e
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Tomás Tormo <tomast@balena.io>
+        signed-off-by: Tomás Tormo <tomast@balena.io>
+      author: Tomás Tormo
+      nested: []
+    - subject: 'AMI automation: Simplify public ssh addition. Do not use sudo'
+      hash: 06f2731ad517d6b57adeb1f2d9e70f2b40d4efa2
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Tomás Tormo <tomast@balena.io>
+        signed-off-by: Tomás Tormo <tomast@balena.io>
+      author: Tomás Tormo
+      nested: []
+    - subject: 'automation: Generate and publish AMI from the raw balenaOS image'
+      hash: 899e317337a8dff507a17d075bb1f5c68d056786
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Tomás Tormo <tomast@balena.io>
+        signed-off-by: Tomás Tormo <tomast@balena.io>
+      author: Tomás Tormo
+      nested: []
+  version: 1.15.0
+  date: 2021-06-30T15:52:29.158Z
+- commits:
     - subject: 'balena-lib: Fix print statements helper functions'
       hash: 45ccecc6945a06c3975c4ffc782bef5770f30ae7
       body: ''
