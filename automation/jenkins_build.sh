@@ -41,7 +41,7 @@ rootdir="$( cd "$( dirname "$0" )" && pwd )/../../"
 WORKSPACE=${WORKSPACE:-$rootdir}
 ENABLE_TESTS=${ENABLE_TESTS:=false}
 ESR=${ESR:-false}
-BARYS_ARGUMENTS_VAR="--remove-build"
+BARYS_ARGUMENTS_VAR="--remove-build --bitbake-args -v"
 REMOVE_CONTAINER="--rm"
 
 # process script arguments
